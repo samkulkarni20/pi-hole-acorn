@@ -1,0 +1,37 @@
+containers: {
+  pihole: {
+    env: {
+      "WEBPASSWORD": "PIHOLE_ADMIN_PASSWORD"
+      "TZ": "Asia/Kolkata"
+      "DHCP_ROUTER": "DHCP_ROUTER_IP_ADDRESS"
+      "FTLCONF_LOCAL_IPV4": "LOADBALANCER_IP_ADDRESS"
+    }
+    image: "ghcr.io/pi-hole/pihole"
+    ports: {
+      publish: [
+        "53/tcp",
+        "5353:53/udp",
+        "67/udp",
+        "8080:80/tcp",
+        "8443:443/tcp"
+      ]
+    }
+    dirs: {
+      "/etc/pihole": "volume://pihole-pv-nfs-etc"
+      "/etc/dnsmasq.d": "volume://pihole-pv-nfs-dnsmasq"
+    }
+  }
+}
+
+volumes: {
+  "pihole-pv-nfs-etc": {
+    size: 1G
+    class: "nfs-etc"
+    accessModes: "readWriteMany"
+  }
+  "pihole-pv-nfs-dnsmasq": {
+    size: 1G
+    class: "nfs-dnsmasq"
+    accessModes: "readWriteMany"
+  }
+}
